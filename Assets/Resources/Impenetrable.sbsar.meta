@@ -1,0 +1,240 @@
+fileFormatVersion: 2
+guid: c9aecbced71bf9647a5598c07af40aaf
+SubstanceImporter:
+  serializedVersion: 2
+  materialInstances:
+  - name: Impenetrable
+    prototypeName: Stones_01
+    shaderName: Bumped Specular
+    inputs:
+    - name: $normalformat
+      value:
+        scalar[0]: 0.000000
+        scalar[1]: 0.000000
+        scalar[2]: 0.000000
+        scalar[3]: 0.000000
+        texture: {instanceID: 0}
+    - name: $outputsize
+      value:
+        scalar[0]: 9.000000
+        scalar[1]: 9.000000
+        scalar[2]: 0.000000
+        scalar[3]: 0.000000
+        texture: {instanceID: 0}
+    - name: $randomseed
+      value:
+        scalar[0]: 6216.000000
+        scalar[1]: 0.000000
+        scalar[2]: 0.000000
+        scalar[3]: 0.000000
+        texture: {instanceID: 0}
+    - name: Detail
+      value:
+        scalar[0]: 0.900000
+        scalar[1]: 0.000000
+        scalar[2]: 0.000000
+        scalar[3]: 0.000000
+        texture: {instanceID: 0}
+    - name: Rock_Amount
+      value:
+        scalar[0]: 1.000000
+        scalar[1]: 0.000000
+        scalar[2]: 0.000000
+        scalar[3]: 0.000000
+        texture: {instanceID: 0}
+    - name: Rock_Color
+      value:
+        scalar[0]: 0.400000
+        scalar[1]: 0.370000
+        scalar[2]: 0.350000
+        scalar[3]: 0.000000
+        texture: {instanceID: 0}
+    - name: Rock_Edges
+      value:
+        scalar[0]: 0.000000
+        scalar[1]: 0.000000
+        scalar[2]: 0.000000
+        scalar[3]: 0.000000
+        texture: {instanceID: 0}
+    - name: Rock_Size
+      value:
+        scalar[0]: 0.621828
+        scalar[1]: 0.000000
+        scalar[2]: 0.000000
+        scalar[3]: 0.000000
+        texture: {instanceID: 0}
+    - name: Shape_Shift
+      value:
+        scalar[0]: 0.500000
+        scalar[1]: 0.000000
+        scalar[2]: 0.000000
+        scalar[3]: 0.000000
+        texture: {instanceID: 0}
+    - name: Depth
+      value:
+        scalar[0]: 0.000000
+        scalar[1]: 0.000000
+        scalar[2]: 0.000000
+        scalar[3]: 0.000000
+        texture: {instanceID: 0}
+    - name: Relief_Balance
+      value:
+        scalar[0]: 32.000000
+        scalar[1]: 0.000000
+        scalar[2]: 0.000000
+        scalar[3]: 0.000000
+        texture: {instanceID: 0}
+    - name: Normal
+      value:
+        scalar[0]: 0.500000
+        scalar[1]: 0.000000
+        scalar[2]: 0.000000
+        scalar[3]: 0.000000
+        texture: {instanceID: 0}
+    - name: Emboss
+      value:
+        scalar[0]: 6.886161
+        scalar[1]: 0.000000
+        scalar[2]: 0.000000
+        scalar[3]: 0.000000
+        texture: {instanceID: 0}
+    - name: Angle
+      value:
+        scalar[0]: 0.741424
+        scalar[1]: 0.000000
+        scalar[2]: 0.000000
+        scalar[3]: 0.000000
+        texture: {instanceID: 0}
+    - name: Hue_Shift
+      value:
+        scalar[0]: 0.000000
+        scalar[1]: 0.000000
+        scalar[2]: 0.000000
+        scalar[3]: 0.000000
+        texture: {instanceID: 0}
+    - name: Saturation
+      value:
+        scalar[0]: 0.500000
+        scalar[1]: 0.000000
+        scalar[2]: 0.000000
+        scalar[3]: 0.000000
+        texture: {instanceID: 0}
+    - name: Luminosity
+      value:
+        scalar[0]: 0.500000
+        scalar[1]: 0.000000
+        scalar[2]: 0.000000
+        scalar[3]: 0.000000
+        texture: {instanceID: 0}
+    - name: Contrast
+      value:
+        scalar[0]: 0.000000
+        scalar[1]: 0.000000
+        scalar[2]: 0.000000
+        scalar[3]: 0.000000
+        texture: {instanceID: 0}
+    materialInformation:
+      offset: {x: 0.000000, y: 0.000000}
+      scale: {x: 1.000000, y: 1.000000}
+      generatedAtLoading: 1
+      generateAllOutputs: 1
+      animationUpdateRate: 42
+    materialProperties:
+      serializedVersion: 2
+      texEnvs:
+        data:
+          first:
+            name: _MainTex
+          second:
+            texture: {fileID: 546563252, guid: c9aecbced71bf9647a5598c07af40aaf, type: 1}
+            scale: {x: 1.000000, y: 1.000000}
+            offset: {x: 0.000000, y: 0.000000}
+        data:
+          first:
+            name: _BumpMap
+          second:
+            texture: {fileID: 1467857974, guid: c9aecbced71bf9647a5598c07af40aaf,
+              type: 1}
+            scale: {x: 1.000000, y: 1.000000}
+            offset: {x: 0.000000, y: 0.000000}
+      floats:
+        data:
+          first:
+            name: _Shininess
+          second: 0.078125
+      colors:
+        data:
+          first:
+            name: _Color
+          second: {r: 0.607843, g: 0.572549, b: 0.427451, a: 1.000000}
+        data:
+          first:
+            name: _SpecColor
+          second: {r: 0.500000, g: 0.500000, b: 0.500000, a: 1.000000}
+    textureParameters:
+    - name: Stones_01_Diffuse
+      alphaSource: 5
+      filterMode: 1
+      aniso: 1
+      wrapMode: 0
+    - name: Stones_01_Specular
+      alphaSource: 0
+      filterMode: 1
+      aniso: 1
+      wrapMode: 0
+    - name: Stones_01_Normal
+      alphaSource: 0
+      filterMode: 1
+      aniso: 1
+      wrapMode: 0
+    - name: Stones_01_Bump
+      alphaSource: 0
+      filterMode: 1
+      aniso: 1
+      wrapMode: 0
+    - name: Stones_01_Displacement
+      alphaSource: 0
+      filterMode: 1
+      aniso: 1
+      wrapMode: 0
+    - name: Stones_01_Height
+      alphaSource: 0
+      filterMode: 1
+      aniso: 1
+      wrapMode: 0
+    - name: Impenetrable_Diffuse
+      alphaSource: 5
+      filterMode: 1
+      aniso: 1
+      wrapMode: 0
+    - name: Impenetrable_Specular
+      alphaSource: 0
+      filterMode: 1
+      aniso: 1
+      wrapMode: 0
+    - name: Impenetrable_Normal
+      alphaSource: 0
+      filterMode: 1
+      aniso: 1
+      wrapMode: 0
+    - name: Impenetrable_Bump
+      alphaSource: 0
+      filterMode: 1
+      aniso: 1
+      wrapMode: 0
+    - name: Impenetrable_Displacement
+      alphaSource: 0
+      filterMode: 1
+      aniso: 1
+      wrapMode: 0
+    - name: Impenetrable_Height
+      alphaSource: 0
+      filterMode: 1
+      aniso: 1
+      wrapMode: 0
+    buildTargetSettings:
+    - serializedVersion: 2
+      buildTarget: 
+      textureWidth: 512
+      textureHeight: 512
+      textureFormat: 0
