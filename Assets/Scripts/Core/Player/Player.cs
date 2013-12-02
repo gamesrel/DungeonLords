@@ -34,55 +34,55 @@ public sealed class Player {
     public GameObject PlayerGameObjRepresentation { get { return objRepresentation; } }
 
     public Player(OWNER own, PLAYER typeOfPlayer, Pos startingPos, bool playerControlledByAI, GameObject playerObj = null/*in case is null create a new one*/) {
-	if(!playerObj) {
-	    objRepresentation = new GameObject("Player " + ((playerControlledByAI) ? "AI" : ""));
-	    /*TODO DEFINE AI HANDLERS AND ADD THEM*/
-	} else {
-	    objRepresentation = playerObj;
-	    if(!objRepresentation.GetComponent<PlayerHandler>())
-		objRepresentation.AddComponent<PlayerHandler>();
-	    objRepresentation.GetComponent<PlayerHandler>().PlayerDescr = this;
-	}
+        if(!playerObj) {
+            objRepresentation = new GameObject("Player " + ((playerControlledByAI) ? "AI" : ""));
+            /*TODO DEFINE AI HANDLERS AND ADD THEM*/
+        } else {
+            objRepresentation = playerObj;
+            if(!objRepresentation.GetComponent<PlayerHandler>())
+                objRepresentation.AddComponent<PlayerHandler>();
+            objRepresentation.GetComponent<PlayerHandler>().PlayerDescr = this;
+        }
 	
-	PlayerTasks = objRepresentation.AddComponent<TaskManager>();//Add taskManager object
-	PlayerTasks.PlayerTasksOwner = this;
+        PlayerTasks = objRepresentation.AddComponent<TaskManager>();//Add taskManager object
+        PlayerTasks.PlayerTasksOwner = this;
 	
-	if((int) own < 1)
-	    Debug.LogError("ERROR: Player number cannot be negative");
-	mPlayerNumber = own;
-	mTypeOfPlayer = typeOfPlayer;
-	mPlayerPos = startingPos;
-	mMinions = new List<Minion>();
-	mGrabbedMinions = new Stack<Minion>();
-	CreateStartingDiggers(GLOBAL.STARTINGDIGGERS);
+        if((int) own < 1)
+            Debug.LogError("ERROR: Player number cannot be negative");
+        mPlayerNumber = own;
+        mTypeOfPlayer = typeOfPlayer;
+        mPlayerPos = startingPos;
+        mMinions = new List<Minion>();
+        mGrabbedMinions = new Stack<Minion>();
+        CreateStartingDiggers(GLOBAL.STARTINGDIGGERS);
     }
 
     //adds a minion to the grabbed minions stack
     public void GrabMinion(Minion m) {
-	mGrabbedMinions.Push(m);
+        mGrabbedMinions.Push(m);
     }
 
     //releases a grabbed minion at pos p if there is any inthe stack
     public void PopMinion(Pos p) {
-	if(mGrabbedMinions.Count > 0) {
-	    Minion m = mGrabbedMinions.Pop();
-	    m.MinionHandlerRef.ReleaseMinion(p);
-	}
+        if(mGrabbedMinions.Count > 0) {
+            Minion m = mGrabbedMinions.Pop();
+            m.MinionHandlerRef.ReleaseMinion(p);
+        }
     }
 
     //Max 8 minions can be grabbed at the same time.
     public bool CanGrabAnotherMinion() {
-	return mGrabbedMinions.Count < 8;
+        return mGrabbedMinions.Count < 8;
     }
     
     private void CreateStartingDiggers(int numberOfDiggers) {
-	//initial positions where the diggers will be placed, if we have more diggers than array.length then just % the array.
-	Pos[] initialPositions = {new Pos(mPlayerPos.x-2,mPlayerPos.z-2), new Pos(mPlayerPos.x-2,mPlayerPos.z+2), new Pos(mPlayerPos.x+2,mPlayerPos.z+2), new Pos(mPlayerPos.x+2, mPlayerPos.z-2),
-				  new Pos(mPlayerPos.x-2,mPlayerPos.z+0), new Pos(mPlayerPos.x+0,mPlayerPos.z+2), new Pos(mPlayerPos.x+2,mPlayerPos.z+0), new Pos(mPlayerPos.x+0, mPlayerPos.z-2),
-				  new Pos(mPlayerPos.x-2,mPlayerPos.z+1), new Pos(mPlayerPos.x+1,mPlayerPos.z+2), new Pos(mPlayerPos.x+2,mPlayerPos.z-1), new Pos(mPlayerPos.x-1, mPlayerPos.z-2),
-				  new Pos(mPlayerPos.x-2,mPlayerPos.z-1), new Pos(mPlayerPos.x-1,mPlayerPos.z+2), new Pos(mPlayerPos.x+2,mPlayerPos.z+1), new Pos(mPlayerPos.x+1, mPlayerPos.z-2) };
-	for(int i = 0; i < numberOfDiggers; i++) {
-	    mMinions.Add(new Digger(this, initialPositions[i%initialPositions.Length], "Digger " + i));
-	}				 
+        //initial positions where the diggers will be placed, if we have more diggers than array.length then just % the array.
+        Pos[] initialPositions = {new Pos(mPlayerPos.x-2,mPlayerPos.z-2), new Pos(mPlayerPos.x-2,mPlayerPos.z+2), new Pos(mPlayerPos.x+2,mPlayerPos.z+2), new Pos(mPlayerPos.x+2, mPlayerPos.z-2),
+                                  new Pos(mPlayerPos.x-2,mPlayerPos.z+0), new Pos(mPlayerPos.x+0,mPlayerPos.z+2), new Pos(mPlayerPos.x+2,mPlayerPos.z+0), new Pos(mPlayerPos.x+0, mPlayerPos.z-2),
+                                  new Pos(mPlayerPos.x-2,mPlayerPos.z+1), new Pos(mPlayerPos.x+1,mPlayerPos.z+2), new Pos(mPlayerPos.x+2,mPlayerPos.z-1), new Pos(mPlayerPos.x-1, mPlayerPos.z-2),
+                                  new Pos(mPlayerPos.x-2,mPlayerPos.z-1), new Pos(mPlayerPos.x-1,mPlayerPos.z+2), new Pos(mPlayerPos.x+2,mPlayerPos.z+1), new Pos(mPlayerPos.x+1, mPlayerPos.z-2) };
+        for(int i = 0; i < numberOfDiggers; i++) {
+            mMinions.Add(new Digger(this, initialPositions[i%initialPositions.Length], "Digger " + i));
+        }				 
     }
 }

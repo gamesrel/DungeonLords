@@ -1,6 +1,6 @@
 /*
   This class contains tasks a certain player asks its creature to do.
- */
+*/
 
 using UnityEngine;
 using System.Collections;
@@ -21,28 +21,28 @@ public class Task {
     public List<Minion> assignedMinions;//represents the assigned minions for this task
     
     public Task(TASK t, Pos p, int maxNumberOfMinionsForThisTask, GameObject representation = null) {
-	mTypeOfTask = t;
-	TaskPosition = p;
-	mID = taskID;
-	taskRepresentation = representation;
-	mNumberOfMinionsForTask = maxNumberOfMinionsForThisTask;
-	taskID++;
-	assignedMinions = new List<Minion>();
+        mTypeOfTask = t;
+        TaskPosition = p;
+        mID = taskID;
+        taskRepresentation = representation;
+        mNumberOfMinionsForTask = maxNumberOfMinionsForThisTask;
+        taskID++;
+        assignedMinions = new List<Minion>();
     }
 
     public void DestroyRepresentation() {
-	if(taskRepresentation)
-	    MonoBehaviour.Destroy(taskRepresentation);
+        if(taskRepresentation)
+            MonoBehaviour.Destroy(taskRepresentation);
     }
 
     public void ClearMinions() {
-	Debug.Log("Clearing minions from task " + mID + " #ofMinions for this task: " + assignedMinions.Count);
-	for(int i = 0; i < assignedMinions.Count; i++) {
-	    assignedMinions[i].CurrentTask = null;
-	    assignedMinions[i].StopMoving();
-	    Debug.Log("Stopping " + assignedMinions[i].minionRepresentation.name);
-	}
-	assignedMinions.Clear();
+        Debug.Log("Clearing minions from task " + mID + " #ofMinions for this task: " + assignedMinions.Count);
+        for(int i = 0; i < assignedMinions.Count; i++) {
+            assignedMinions[i].CurrentTask = null;
+            assignedMinions[i].StopMoving();
+            Debug.Log("Stopping " + assignedMinions[i].minionRepresentation.name);
+        }
+        assignedMinions.Clear();
     }
 
     public void RemoveMinionFromTask(Minion m) {
@@ -52,11 +52,10 @@ public class Task {
                 return;
             }
         }
-	Debug.LogError("couldnt find minion to remove from task");
+        Debug.LogError("couldnt find minion to remove from task");
     }
     
     public void AddMinion(Minion m) {
-	assignedMinions.Add(m);
-    }
-    
+        assignedMinions.Add(m);
+    }    
 }

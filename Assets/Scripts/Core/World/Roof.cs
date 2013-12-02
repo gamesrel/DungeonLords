@@ -1,6 +1,6 @@
 /*
   Simple class that contains all the info for a roof tile.
- */
+*/
 
 using UnityEngine;
 using System.Collections;
@@ -24,24 +24,24 @@ public sealed class Roof : Tile {
     public override OWNER TileOwner { get { return mTileOwner; } }
     
     public override void ChangeTileOwner(PLAYER typeOfPlayer, OWNER roofOwner) {
-	TypeOfPlayer = typeOfPlayer;
-	mTileOwner = roofOwner;
-	switch (mTileOwner) {
-	case OWNER.IMPENETRABLE | OWNER.INFINITEGOLD:
-	    mHealth = Mathf.Infinity;
-	    break;
-	case OWNER.GOLD:
-	    mHealth = 100;
-	    break;
-	case OWNER.UNOWNED:
-	    mHealth = 25;
-	    break;
-	default:
-	    //means the roof has an owner, have to be carefull to not let the user digg other built roof
-	    mHealth = 100;
-	    break;	      
-	}
-	ChangeMaterial(TextureManager.Instance.LoadRoofMaterial(roofOwner, typeOfPlayer));
+        TypeOfPlayer = typeOfPlayer;
+        mTileOwner = roofOwner;
+        switch (mTileOwner) {
+        case OWNER.IMPENETRABLE | OWNER.INFINITEGOLD:
+            mHealth = Mathf.Infinity;
+            break;
+        case OWNER.GOLD:
+            mHealth = 100;
+            break;
+        case OWNER.UNOWNED:
+            mHealth = 25;
+            break;
+        default:
+            //means the roof has an owner, have to be carefull to not let the user digg other built roof
+            mHealth = 100;
+            break;	      
+        }
+        ChangeMaterial(TextureManager.Instance.LoadRoofMaterial(roofOwner, typeOfPlayer));
     }
 
     public override Pos TilePosition { get; set; }
@@ -49,35 +49,35 @@ public sealed class Roof : Tile {
     
     public Roof(Pos pos, Player p = null, string tileName = "")
     {
-	TilePosition = pos;
-	mUp = mDown = mLeft = mRight = null;
+        TilePosition = pos;
+        mUp = mDown = mLeft = mRight = null;
 
-	if(p == null) {//no one owns this tile
-	    mTileOwner = OWNER.UNOWNED;
-	} else {
-	    mTileOwner = p.PlayerNumber;
-	    TypeOfPlayer = p.TypeOfPlayer;
-	}
-	Draw(tileName);
+        if(p == null) {//no one owns this tile
+            mTileOwner = OWNER.UNOWNED;
+        } else {
+            mTileOwner = p.PlayerNumber;
+            TypeOfPlayer = p.TypeOfPlayer;
+        }
+        Draw(tileName);
 
     }
     public Roof(Pos pos, OWNER own, string tileName = "")
     {
-	TilePosition = pos;
-	mTileOwner = own;
-	mUp = mDown = mLeft = mRight = null;
+        TilePosition = pos;
+        mTileOwner = own;
+        mUp = mDown = mLeft = mRight = null;
 	
-	Draw(tileName);
+        Draw(tileName);
 
     }
 
     protected override void Draw(string tileName = "") {
-	tileRepresentation = TileCreator.CreateTile(new Vector3(TilePosition.x, GLOBAL.WALLHEIGHT, TilePosition.z),
-						    TextureManager.Instance.LoadRawMaterial(mTileOwner)/*material*/,
-						    tileName);
+        tileRepresentation = TileCreator.CreateTile(new Vector3(TilePosition.x, GLOBAL.WALLHEIGHT, TilePosition.z),
+                                                    TextureManager.Instance.LoadRawMaterial(mTileOwner)/*material*/,
+                                                    tileName);
     }
 
     public void DestroyRoof() {
-	MonoBehaviour.Destroy(tileRepresentation);
+        MonoBehaviour.Destroy(tileRepresentation);
     }
 }

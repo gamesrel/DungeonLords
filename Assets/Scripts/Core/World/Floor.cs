@@ -35,88 +35,87 @@ public sealed class Floor : Tile {
     //only changes the floor owner and doesnt extend the change to the surrounding walls/roofs
     // no use for this atm... perhaps for a world editor?
     public  override void ChangeTileOwner(PLAYER typeOfPlayer, OWNER value) {
-	mTileOwner = value;
-	TypeOfPlayer = typeOfPlayer;
-	ChangeMaterial(TextureManager.Instance.LoadFloorMaterial(value, typeOfPlayer));
+        mTileOwner = value;
+        TypeOfPlayer = typeOfPlayer;
+        ChangeMaterial(TextureManager.Instance.LoadFloorMaterial(value, typeOfPlayer));
     }
 
 
     //Changes the floor owner and also if explicity expresed it extend the change to the surrounding tiles
     public void ChangeFloorOwner(PLAYER typeOfPl, OWNER value, bool extendChangeToWallsAndRoof = false) {
-	TypeOfPlayer = typeOfPl;
-	if(mUpWall != null) {
-	    mUpWall.ChangeTileOwner(typeOfPl, extendChangeToWallsAndRoof ? value : OWNER.UNOWNED);
-	}
-	if(mDownWall != null) {
-	    mDownWall.ChangeTileOwner(typeOfPl, extendChangeToWallsAndRoof ? value : OWNER.UNOWNED);
-	}
-	if(mLeftWall != null) {
-	    mLeftWall.ChangeTileOwner(typeOfPl, extendChangeToWallsAndRoof ? value : OWNER.UNOWNED);
-	}
-	if(mRightWall != null) {
-	    mRightWall.ChangeTileOwner(typeOfPl, extendChangeToWallsAndRoof ? value : OWNER.UNOWNED);
-	}
-	ChangeMaterial(TextureManager.Instance.LoadFloorMaterial(value, TypeOfPlayer));
-	mTileOwner = value;
-	//recalculate floor health
-	switch (mTileOwner) {
-	case OWNER.IMPENETRABLE | OWNER.INFINITEGOLD:
-	    mHealth = Mathf.Infinity;
-	    break;
-	case OWNER.GOLD:
-	    mHealth = 100;
-	    break;
-	case OWNER.UNOWNED:
-	    mHealth = 25;
-	    break;
-	default:
-	    //means the floor has an owner, have to be carefull to not let the user digg other built roof
-	    mHealth = 100;
-	    break;	      
-	}
+        TypeOfPlayer = typeOfPl;
+        if(mUpWall != null) {
+            mUpWall.ChangeTileOwner(typeOfPl, extendChangeToWallsAndRoof ? value : OWNER.UNOWNED);
+        }
+        if(mDownWall != null) {
+            mDownWall.ChangeTileOwner(typeOfPl, extendChangeToWallsAndRoof ? value : OWNER.UNOWNED);
+        }
+        if(mLeftWall != null) {
+            mLeftWall.ChangeTileOwner(typeOfPl, extendChangeToWallsAndRoof ? value : OWNER.UNOWNED);
+        }
+        if(mRightWall != null) {
+            mRightWall.ChangeTileOwner(typeOfPl, extendChangeToWallsAndRoof ? value : OWNER.UNOWNED);
+        }
+        ChangeMaterial(TextureManager.Instance.LoadFloorMaterial(value, TypeOfPlayer));
+        mTileOwner = value;
+        //recalculate floor health
+        switch (mTileOwner) {
+        case OWNER.IMPENETRABLE | OWNER.INFINITEGOLD:
+            mHealth = Mathf.Infinity;
+            break;
+        case OWNER.GOLD:
+            mHealth = 100;
+            break;
+        case OWNER.UNOWNED:
+            mHealth = 25;
+            break;
+        default:
+            //means the floor has an owner, have to be carefull to not let the user digg other built roof
+            mHealth = 100;
+            break;	      
+        }
     }
     
 
     public override PLAYER TypeOfPlayer { get; set; }//used to know which kind of player owns this tile
     
-    public Floor(Pos pos, Player p = null, string tileName = "")
-    {
-	TilePosition = pos;
-	mUpWall = mDownWall = mLeftWall = mRightWall = null;
-	mUp = mDown = mLeft = mRight = null;
-	if(p == null) {//no one owns this tile
-	    mTileOwner = OWNER.UNOWNED;
-	} else {
-	    mTileOwner = p.PlayerNumber;
-	    TypeOfPlayer = p.TypeOfPlayer;
-	}
-	//Set the floor health
-	switch (mTileOwner) {
-	case OWNER.IMPENETRABLE | OWNER.INFINITEGOLD:
-	    mHealth = Mathf.Infinity;
-	    break;
-	case OWNER.GOLD:
-	    mHealth = 100;
-	    break;
-	case OWNER.UNOWNED:
-	    mHealth = 25;
-	    break;
-	default:
-	    //means the floor has an owner, have to be carefull to not let the user digg other built roof
-	    mHealth = 100;
-	    break;	      
-	}
-	Draw(tileName);
+    public Floor(Pos pos, Player p = null, string tileName = "") {
+        TilePosition = pos;
+        mUpWall = mDownWall = mLeftWall = mRightWall = null;
+        mUp = mDown = mLeft = mRight = null;
+        if(p == null) {//no one owns this tile
+            mTileOwner = OWNER.UNOWNED;
+        } else {
+            mTileOwner = p.PlayerNumber;
+            TypeOfPlayer = p.TypeOfPlayer;
+        }
+        //Set the floor health
+        switch (mTileOwner) {
+        case OWNER.IMPENETRABLE | OWNER.INFINITEGOLD:
+            mHealth = Mathf.Infinity;
+            break;
+        case OWNER.GOLD:
+            mHealth = 100;
+            break;
+        case OWNER.UNOWNED:
+            mHealth = 25;
+            break;
+        default:
+            //means the floor has an owner, have to be carefull to not let the user digg other built roof
+            mHealth = 100;
+            break;	      
+        }
+        Draw(tileName);
     }
     
     protected override void Draw(string tileName = "") {
-	tileRepresentation = TileCreator.CreateTile(new Vector3(TilePosition.x, GLOBAL.FLOORHEIGHT, TilePosition.z),
-						    TextureManager.Instance.LoadRawMaterial(mTileOwner)/*material*/,
-						    tileName);
-	tileRepresentation.layer = LayerMask.NameToLayer("Ground");
-	BoxCollider b = tileRepresentation.AddComponent<BoxCollider>();
-	b.center = Vector3.zero;
-	b.size = new Vector3(1, 0.01f, 1);
+        tileRepresentation = TileCreator.CreateTile(new Vector3(TilePosition.x, GLOBAL.FLOORHEIGHT, TilePosition.z),
+                                                    TextureManager.Instance.LoadRawMaterial(mTileOwner)/*material*/,
+                                                    tileName);
+        tileRepresentation.layer = LayerMask.NameToLayer("Ground");
+        BoxCollider b = tileRepresentation.AddComponent<BoxCollider>();
+        b.center = Vector3.zero;
+        b.size = new Vector3(1, 0.01f, 1);
 	
     }
 }

@@ -1,7 +1,7 @@
 /*
   This class represents the basic structure of any world, a tile, considered as the minimun piece of land.
   There are 3 types of tiles, Roof, Wall and Floor.
- */
+*/
 
 using UnityEngine;
 using System.Collections;
@@ -17,7 +17,7 @@ public abstract class Tile {
     public GameObject Representation { get { return tileRepresentation; } }
 
     public void ChangeMaterial(Material m) {
-	Representation.renderer.material = m;
+        Representation.renderer.material = m;
     }
 
     
