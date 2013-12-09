@@ -14,8 +14,8 @@ public class PlayerHandler : MonoBehaviour {
     void Start () {
         roofPlane = new Plane(new Vector3(0,2,0), new Vector3(0,2,10), new Vector3(10,2,10));
         floorPlane = new Plane(new Vector3(0,0,0), new Vector3(0,0,10), new Vector3(10,0,10));
-	
-    } 
+
+    }
     void Update () {
         CheckForRoofOrFloorCollision();
 
@@ -24,7 +24,7 @@ public class PlayerHandler : MonoBehaviour {
     void OnGUI() {
         DrawGrabbedMinions();
     }
-    
+
     private float enterFloor = 0;
     private float enterRoof = 0;
     private void CheckForRoofOrFloorCollision() {
@@ -33,7 +33,7 @@ public class PlayerHandler : MonoBehaviour {
         int posZRoof = Mathf.RoundToInt(ray.GetPoint(enterRoof).z);
         int posXFloor = Mathf.RoundToInt(ray.GetPoint(enterFloor).x);
         int posZFloor = Mathf.RoundToInt(ray.GetPoint(enterFloor).z);
-
+        // Crea una clase CollisionDetetor o w/e que reciba las coordenadas y aplique esta lógica
 
         //throw the 1rst ray, true if the mouse collides with the roof and position is within limits and see if the ray collides with a roof
         if(roofPlane.Raycast(ray,out enterRoof) && posXRoof >= 0 && posXRoof < DungeonWorld.WorldWidth && posZRoof >= 0 && posZRoof < DungeonWorld.WorldHeight) {
@@ -41,7 +41,7 @@ public class PlayerHandler : MonoBehaviour {
 
                 //Debug.Log("TECHO!!!" + posXRoof + "," + posZRoof);//"Draw silouette of roof here
                 ShowTmpRoof(new Pos(posXRoof, posZRoof));//ojo, tener en cuenta que roofs nulos tambien se deberian dibujar
-	    
+
             } else if(floorPlane.Raycast(ray,out enterFloor) && posXFloor >= 0 && posXFloor < DungeonWorld.WorldWidth && posZFloor >= 0 && posZFloor < DungeonWorld.WorldHeight) {//same for floor
                 if(DungeonWorld.WarZone[posXRoof, posZRoof] != null && DungeonWorld.WarZone[posXFloor, posZFloor] != null && DungeonWorld.WarZone[posXFloor, posZFloor].GetType() == typeof(Floor)) {
                     Floor selectedFloor = (Floor) DungeonWorld.WarZone[posXFloor, posZFloor];
@@ -73,7 +73,7 @@ public class PlayerHandler : MonoBehaviour {
             } else {
                 canDig = false;
             }
-	    
+
             lastPos = p;
         }
         if(Input.GetMouseButtonDown(0) && canDig) {
@@ -84,6 +84,8 @@ public class PlayerHandler : MonoBehaviour {
                 PlayerDescr.PlayerTasks.RemoveTask(positionAlreadyMarkedForDigging);
         }
     }
+
+    // tenés variables de clase solo para un metodo, esto usualmente significa otra clase
 
     //Draws the current minions that the player has grabbed
     private readonly int maxWidth = 4;
@@ -103,7 +105,7 @@ public class PlayerHandler : MonoBehaviour {
                                     grabbedMinionsToDraw[count].MinionHandlerRef.IconRepresentation);
                 } else {
                     return;
-                }		
+                }
                 count++;
             }
         }

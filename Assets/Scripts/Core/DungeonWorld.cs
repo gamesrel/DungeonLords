@@ -11,35 +11,40 @@ using System.Collections.Generic;
 public sealed class DungeonWorld {
     //represents a tile matrix that contains the players.
     // This matrix should be only be modified by methods that this class contains
+    // el private static no te dice lo mismo que la línea anterior a esta?
     private static Tile[,] mWarZone;
     public static Tile[,] WarZone { get { return mWarZone; } }
+    // Espacio vacío inconsistente.
 
-    
     public static GameObject WarMap { get; set; }
-    
-    
+    // Espacio vacío inconsistente.
+
     private static int mWorldWidth;
     public static int WorldWidth { get { return mWorldWidth;} }
+    // aquí al menos mete un espacio
     private static int mWorldHeight;
     public static int WorldHeight { get { return mWorldHeight; } }
 
-    
+
+    // move el comentario tuyo a
+    // Si me vas a definir esto aquí (por qué?) entonces al menos decime dónde está EntryPoint.cs.
     public static Pathfinding.GridGraph AIWorldGraph { get; set; }//defines the nav mesh for all the AI to move from A to B pos; This gets set in EntryPoint.cs
-    
+
     public DungeonWorld(int width, int height, List<Player> playersList) {
         mWarZone = new Tile[width,height];
         mWorldWidth = width;
         mWorldHeight = height;
         CreateWorldLimits(width, height);
         PlacePlayers(playersList);
-	
+        // más espacio inconsistente!
     }
 
     // Gets called from EntryPoint.cs
     private void PlacePlayers(List <Player> players) {
         for(int i = 0; i < players.Count; i++)
             CreateStartingPlace(players[i].PlayerPosition, players[i]);
-
+        // Si usas source control por qué tenés esto comentado aquí? Borralo
+        // si no está haciendo nada para no causar confusión.
         //PrintWarZone();
     }
 
@@ -49,6 +54,9 @@ public sealed class DungeonWorld {
         //limits are always roof and impenetrable
         Roof limit;
         GameObject WorldLimits = new GameObject("WorldLimits");
+        // En los siguientes dos ciclos tenés el mismo código repetido con un solo
+        // parametro adicional. Hace un método que transforme la matriz y llamalo
+        // aquí con el parámetro adicional.
         for(int i = 0; i < width; i++) {
             limit = new Roof(new Pos(i,0), OWNER.IMPENETRABLE, "LIMIT " + i + ",0");
             limit.Representation.transform.parent = WorldLimits.transform;
@@ -70,34 +78,42 @@ public sealed class DungeonWorld {
     }
 
     /************ MEAT OF THE GAME FOR CREATING THE WORLD ***************/
-    // Depending on which tiles are near the created tile, it creates a new UNOWNED roof/floor with its 
+    // Depending on which tiles are near the created tile, it creates a new UNOWNED roof/floor with its
     // pertinent walls and saves it to the WarZone matrix.
     //
     // Consider this function like carving a hole.
     //
-    public static void CreatePosition(Pos p/*Player player*/) {
+    public static void CreatePosition(Pos p/*Player player*/) { // wtf
+        // en vez del comentario implementá un metodo que devuelva este booleano
+        // y se llame p.isInside(Matriz)
         if(!(p.x > 0 && p.x < mWorldWidth-1 && p.z > 0 && p.z < mWorldHeight-1)) {//make sure Pos p is inside the WarZone Matrix.
             Debug.LogError("ERROR: Tile " + p.x + "," + p.z + " is not within the world limits.");
             return;
         }
+        // no voy a comentar hasta el siguiente método. no me gusta un culo
+        // la lógica de aquí hacia abajo, tenés basicamente medio programa en un
+        // método. El comportamiento de cada Tile debería estar encapsulado en
+        // metodos ya sea en clases independientes que hereden de Tile o en
+        // una método común con params adicionales.
+
         Floor createdFloor = new Floor(p);
         if(mWarZone[p.x,p.z] != null)
             if(mWarZone[p.x,p.z].GetType() == typeof(Roof))//there is already a roof here so we need to delete it first and then place the new floor
                 ((Roof) mWarZone[p.x, p.z]).DestroyRoof();
-	    
+
         mWarZone[p.x, p.z] = createdFloor;
-	
+
         Roof roofLeft, roofRight, roofUp, roofDown;
         Floor floorLeft, floorRight, floorUp, floorDown;
         Wall leftWall, rightWall, upWall, downWall;
-	
+
         //lets check each surrounding tiles from the tile at p
         //Left Tile
         if(p.x-1 > 0) { // check if its within the world limits
             if(mWarZone[p.x-1, p.z] == null) {//nothing to the left, lets build a roof and link it to the floor.
                 roofLeft = new Roof(new Pos(p.x-1, p.z), OWNER.UNOWNED);
                 roofLeft.Right = createdFloor;
-		
+
                 mWarZone[p.x-1, p.z] = roofLeft;
 
                 createdFloor.Left = roofLeft;
@@ -115,14 +131,14 @@ public sealed class DungeonWorld {
                     floorLeft = (Floor) mWarZone[p.x-1, p.z];
 
                     if(floorLeft.RightWall != null) floorLeft.RightWall.DestroyWall();//Destroy any created wall if there is one
-                    floorLeft.RightWall = null; 
+                    floorLeft.RightWall = null;
 
                     createdFloor.Left = floorLeft;
                     floorLeft.Right = createdFloor;
 
 
                 } else {//SOMETHING ELSE
-                    Debug.LogError("Not supported tile type: " + mWarZone[p.x-1, p.z].GetType()); 
+                    Debug.LogError("Not supported tile type: " + mWarZone[p.x-1, p.z].GetType());
                 }
             }
         }
@@ -149,12 +165,12 @@ public sealed class DungeonWorld {
                     floorRight = (Floor) mWarZone[p.x+1, p.z];
 
                     if(floorRight.LeftWall != null) floorRight.LeftWall.DestroyWall();//Destroy any created wall if there is one
-                    floorRight.LeftWall = null; 
+                    floorRight.LeftWall = null;
 
                     createdFloor.Right = floorRight;
                     floorRight.Left = createdFloor;
                 } else {//SOMETHING ELSE
-                    Debug.LogError("Not supported tile type: " + mWarZone[p.x+1, p.z].GetType()); 
+                    Debug.LogError("Not supported tile type: " + mWarZone[p.x+1, p.z].GetType());
                 }
             }
         }
@@ -181,13 +197,13 @@ public sealed class DungeonWorld {
                     floorUp = (Floor) mWarZone[p.x, p.z+1];
 
                     if(floorUp.DownWall != null) floorUp.DownWall.DestroyWall();//Destroy any created wall if there is one
-                    floorUp.DownWall = null; 
+                    floorUp.DownWall = null;
 
                     createdFloor.Up = floorUp;
                     floorUp.Down = createdFloor;
-		    
+
                 } else {//SOMETHING ELSE
-                    Debug.LogError("Not supported tile type: " + mWarZone[p.x, p.z+1].GetType()); 
+                    Debug.LogError("Not supported tile type: " + mWarZone[p.x, p.z+1].GetType());
                 }
             }
         }
@@ -215,12 +231,12 @@ public sealed class DungeonWorld {
 
                     if(floorDown.UpWall != null) floorDown.UpWall.DestroyWall();//Destroy any created wall
                     floorDown.UpWall = null;
-		    
+
                     createdFloor.Down = floorDown;
                     floorDown.Up = createdFloor;
-		    
+
                 } else {//SOMETHING ELSE
-                    Debug.LogError("Not supported tile type: " + mWarZone[p.x, p.z-1].GetType()); 
+                    Debug.LogError("Not supported tile type: " + mWarZone[p.x, p.z-1].GetType());
                 }
             }
         }
@@ -241,7 +257,6 @@ public sealed class DungeonWorld {
         }
     }
     /****************************************************************/
-
     /*
       Creates a starting point at initialPos and depending if the starting point
       will contain a hero or a devil god.
@@ -265,6 +280,7 @@ public sealed class DungeonWorld {
       hero -> True if the starting point will contain a hero.
       p -> Used to know who is the owner of this Starting place.
     */
+    // StartingPlace debería ser uan clase que contenga la lógica de aquí.
     private void CreateStartingPlace(Pos initialPos, Player pl) {
 
         Pos tmpPos;
@@ -272,8 +288,11 @@ public sealed class DungeonWorld {
             {
                 //TODO: Organize the initial layouts for each kind of  player.
             case PLAYER.HERO:
+                // No uses números mágicos, esos números deberían venir de un
+                // método (i < numRows()) o de una variable (algo = initialPos.z - 3;)
                 for(int i = 1; i < 6; i++) {
                     for(int j = 1; j < 6; j++) {
+                        // espacio inconsistente entre los - y los +
                         tmpPos = new Pos(initialPos.x-3 + i, initialPos.z-3 + j);
                         CreatePosition(tmpPos);
                         ChangeTileOwner(tmpPos, pl, true/*extend change of owner to walls and roof*/);
@@ -281,6 +300,8 @@ public sealed class DungeonWorld {
                 }
                 break;
             case PLAYER.DEVILGOD:
+                // Si tuvieras los tiles en una clase adicional te ahorrarías
+                // mucho camello como este. Incluso un arreglo: tiles.map(...)
                 for(int i = 1; i < 6; i++) {
                     for(int j = 1; j < 6; j++) {
                         tmpPos = new Pos(initialPos.x-3 + i, initialPos.z-3 + j);
@@ -289,25 +310,28 @@ public sealed class DungeonWorld {
                     }
                 }
                 break;
-		
+
             }
     }
 
-    
+
 
     /**/
     private void PrintWarZone() {
         string s = "";
         for(int i = 0; i < mWorldWidth; i++) {
             for(int j = 0; j < mWorldHeight; j++) {
-                if(mWarZone[i,j] == null) {
+                if(mWarZone[i,j] == null) {                // no entiendo el comentario abajo.
                     s = s + "   0" + ((int)OWNER.UNOWNED);//UNOWNED < 0 --> "-4"
                 } else {
                     //This is done so when we print the matrix, the numbers are organized
                     if(((int)mWarZone[i,j].TileOwner) < 0) {//organize this for a better drawing...
-                        s = s + "   " + "XX";//((int)WarZone[i,j].TileOwner);			
+                        s = s + "   " + "XX";//((int)WarZone[i,j].TileOwner);
+                        // codigo comentado/ sin usar arriba otra vez, borralo.
                     } else {
                         s = s + "   0" + ((int)mWarZone[i,j].TileOwner);
+                        // demasiado if/else, podrías abstraer lo que estás haciendo
+                        // aquí a un método
                     }
                 }
 

@@ -10,10 +10,10 @@ using System.Collections.Generic;
 public sealed class TaskManager : MonoBehaviour {
 
     private List<Task> tasks;
-    private List<int> numberOfMinionsInTask;//Represents the number of minions tasks[i] has working on; This has the same length than the tasks list and 
-    
+    private List<int> numberOfMinionsInTask;//Represents the number of minions tasks[i] has working on; This has the same length than the tasks list and
+
     public Player PlayerTasksOwner;//player from which this tasks are (in order to access the minion list) (gets set from player.cs)
-    
+
     void Start() {
         tasks = new List<Task>();
         numberOfMinionsInTask = new List<int>();
@@ -35,7 +35,7 @@ public sealed class TaskManager : MonoBehaviour {
         Debug.LogError("No task was found");
         return -1;
     }
-    
+
     public void RemoveTask(Task t) {
         for(int i = 0; i < tasks.Count; i++) {
             if(tasks[i].TaskID == t.TaskID) {
@@ -51,7 +51,7 @@ public sealed class TaskManager : MonoBehaviour {
         }
         //Debug.LogError("Couldnt Find task");
     }
-    
+
     // select from a list of minions and assign a task t to certain minons depending their position/type of minino, etc.
     // Think of this function as the brain behind every minion
     private void AssignTask(Task t, List<Minion> minions) {
@@ -73,16 +73,20 @@ public sealed class TaskManager : MonoBehaviour {
         }
     }
 
+    // El monton de código abajo de esto es el mayor mess que he visto de todos los archivos,
+    // mira la longitud del metodo en lineas de codigo. Extrae este comportamiento a nuevas
+    // clases/metodos.
+
     //Retrieves a list of Minions that dont have tasks that are the closest to a position p
     //this is the meat of the AI
     private bool finishedCalculatingFreeMinions = true;//this is done so this funcion gets called once fully and not "thereaded", consider this function as a big lock.
     private IEnumerator MoveClosestFreeMinionsToTask(List<Minion> minions, Task t, System.Type typeOfMinion = null) {
         bool exactPosition = (t.TypeOfTask == TASK.CONVERTFLOORTILE);//only make the free minion go to the exact task position if we are converting a floor tile, else check the surroundings
-	
+
         while(!finishedCalculatingFreeMinions)
             yield return null;
         finishedCalculatingFreeMinions = false;
-	
+
         //----Debug.Log("*** Analizing TASK: " + t.TaskID + " ****");
         List<Minion> arrMinions = new List<Minion>();//[t.NumberOfMinionsForTask];
         if(typeOfMinion != null) {//working when giving a type of minion
@@ -94,7 +98,7 @@ public sealed class TaskManager : MonoBehaviour {
                         yield return null;
                     /************/
                     //here the distance to p has been calculated for minion[i]. now lets do the magic and find the closest ones
-                    /************/	    
+                    /************/
                     Debug.Log("DISTANCE[" + i + "]:" + minions[i].GetDistanceToCalculatedPos() + " Minion:" + minions[i].minionRepresentation.name);
                     Debug.Log(minions[i].ClosestPositionAroundCalculatedDistanceToP());
                     if(minions[i].GetDistanceToCalculatedPos() != (int) PATH.UNREACHEABLE) {// check that the minion CAN reach the path. else it doesnt make sense.
@@ -147,7 +151,7 @@ public sealed class TaskManager : MonoBehaviour {
             int taskIndex = GetTaskIndex(t);
             if(taskIndex != -1/*means the task hasnt been found.*/ && reachablePath)
                 numberOfMinionsInTask[taskIndex] = arrMinions.Count;
-	    
+
         } else {
             Debug.LogError("Still need to implement moving any kind of minion.");
         }
@@ -160,7 +164,7 @@ public sealed class TaskManager : MonoBehaviour {
         /***************************/
         finishedCalculatingFreeMinions = true;
     }
-    
+
     public Task PositionMarkedForDig(Pos p) {//returns the task that is for digging at position p,if not task is found, returns null
         //Debug.Log("Searching if task already exists");
         for(int i = 0; i < tasks.Count; i++) {
@@ -215,7 +219,7 @@ public sealed class TaskManager : MonoBehaviour {
     //Called each time we want to assign a tasks to the free minions
     public void ManageTasks() {
 #if UNITY_EDITOR
-	    PrintTasksAndMinionsPerTask();
+        PrintTasksAndMinionsPerTask();
 #endif
         for(int i = 0; i < tasks.Count; i++) {
             if(numberOfMinionsInTask[i] < tasks[i].NumberOfMinionsForTask)//assign minions to a task if there can be minions to go for it

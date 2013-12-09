@@ -13,13 +13,13 @@ public class Task {
     public Pos TaskPosition;
     private GameObject taskRepresentation;
 
-    private int mNumberOfMinionsForTask = 0;//tells us how many minions can be working on this task at the same time
+    private int mNumberOfMinionsForTask = 0;//tells us how many minions can be working on this task at the same time -- orly
     public int NumberOfMinionsForTask { get { return mNumberOfMinionsForTask; } }
-    
+
     private int mID = 0;
     public int TaskID { get { return mID; } }
-    public List<Minion> assignedMinions;//represents the assigned minions for this task
-    
+    public List<Minion> assignedMinions;//represents the assigned minions for this task -- orly
+
     public Task(TASK t, Pos p, int maxNumberOfMinionsForThisTask, GameObject representation = null) {
         mTypeOfTask = t;
         TaskPosition = p;
@@ -54,8 +54,8 @@ public class Task {
         }
         Debug.LogError("couldnt find minion to remove from task");
     }
-    
+
     public void AddMinion(Minion m) {
         assignedMinions.Add(m);
-    }    
+    }
 }
