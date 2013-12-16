@@ -36,33 +36,25 @@ public class MinionHandler : MonoBehaviour {
     }
 
     void OnMouseEnter() {
-        // tenés un comentario para un método de una línea, repensa
-        // los nombres si el actual te genera dudas y necesitas el
-        // comentario
-        //dont move to any position while the mouse is over the minion.
-        ReferenceMinion.StopMovingToCurrentPosition();
+        Debug.Log("Mouse touched minion " + gameObject.name);
     }
 
     void OnMouseExit() {
-        //continue moving to the position if we dont have the mouse over the minion anymore.
-        ReferenceMinion.StartMovingToPosition();
+        Debug.Log("Mouse exit, continue moving");
     }
 
     //dissapears this minion and stops any task he is doing at the moment
     public void GrabThisMinion() {
         if(minionLord.CanGrabAnotherMinion()) {
-            // agarrar, cancelar las tareas y actualizar el estado
-            // deberíá hacer algo que haga el lord, no debería estar el
-            // código aquí
+
             minionLord.GrabMinion(ReferenceMinion);
-            ReferenceMinion.StopMoving();
 
             //cancel any task this minion has.
             minionLord.PlayerTasks.FreeTaskFromMinion(ReferenceMinion);
 
 
             ReferenceMinion.IsGrabbed = true;
-            gameObject.SetActiveRecursively(false);
+            gameObject.SetActive(false);
             Debug.Log("Minion " + transform.name + " grabbed.");
         }
     }
@@ -72,7 +64,7 @@ public class MinionHandler : MonoBehaviour {
     public void ReleaseMinion(Pos p) {
         ReferenceMinion.IsGrabbed = false;
         transform.position = p.ToVector3() + new Vector3(0,1,0);
-        gameObject.SetActiveRecursively(true);
+        gameObject.SetActive(true);
         Debug.Log("Released minion " + transform.name + " at: " + p.ToString());
         minionLord.PlayerTasks.ManageTasks();
     }

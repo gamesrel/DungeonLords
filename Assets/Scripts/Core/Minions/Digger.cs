@@ -24,14 +24,8 @@ public sealed class Digger : Minion {
         if(objName != "")
             minionRepresentation.name = objName + " - " + lord.PlayerGameObjRepresentation.name;
 
-        mMinionMoveHandler = minionRepresentation.GetComponent<AIMoveHandler>();
-        mMinionMoveHandler.ReferenceMinion = this;
         mMinionHandler = minionRepresentation.GetComponent<MinionHandler>();
         mMinionHandler.ReferenceMinion = this;
-        // no te ahorres estas llaves, vas a necesitarlas si te extendes en el
-        // futuro
-        if(!mMinionMoveHandler)
-            Debug.LogError("AIMoveHandler could not be found for digger.");
 
     }
 
@@ -39,11 +33,11 @@ public sealed class Digger : Minion {
         if(CurrentTask != null) {
             switch (CurrentTask.TypeOfTask) {
             case TASK.DIG:
-                //Handle stuff! -- comentario inutil
-                mMinionMoveHandler.StartCoroutine(Dig(CurrentTask.TaskPosition));
+                Debug.Log("Implement Dig");
                 break;
             case TASK.CONVERTFLOORTILE: // CONVERT_FLOOR_TITLE es un toque más fácil de leer o qué?
-                mMinionMoveHandler.StartCoroutine(ConvertFloorOwner(CurrentTask.TaskPosition));
+                Debug.Log("Implement convert tile");
+                //mMinionMoveHandler.StartCoroutine(ConvertFloorOwner(CurrentTask.TaskPosition));
                 break;
 
             default:
@@ -102,10 +96,8 @@ public sealed class Digger : Minion {
 
     private void FinishedDigging(Pos p) {
         DungeonWorld.CreatePosition(p/*CurrentTask.TaskPosition*/);
-        DungeonWorld.AIWorldGraph.Scan();
 
-        // este comentario no me dice nada que no pueda leer en el codigo
-        //Task has been finished!, lets remove it from the task manager
+
         lord.PlayerTasks.RemoveTask(CurrentTask);
         CurrentTask = null;//set to null the current task as we have finished it
 

@@ -39,7 +39,6 @@ public class Task {
         Debug.Log("Clearing minions from task " + mID + " #ofMinions for this task: " + assignedMinions.Count);
         for(int i = 0; i < assignedMinions.Count; i++) {
             assignedMinions[i].CurrentTask = null;
-            assignedMinions[i].StopMoving();
             Debug.Log("Stopping " + assignedMinions[i].minionRepresentation.name);
         }
         assignedMinions.Clear();

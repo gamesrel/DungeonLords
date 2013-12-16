@@ -1,12 +1,11 @@
 // This script is attached to the camera that is going to orbit around the world
 
-//TODO: Organize the camera so it can move around the world but dont go out of the word bounds
 
 using System.Collections;
 using UnityEngine;
 
 public class CameraOrbit : MonoBehaviour {
-    
+
     public float xRotationMin = 0f;
     public float xRotationMax = 360f;
     public float yRotationMin  = 24.5f;
@@ -33,10 +32,9 @@ public class CameraOrbit : MonoBehaviour {
 
         orbitTarget.rotation = Quaternion.identity;
         rotationX = transform.eulerAngles.y;
-        rotationY = transform.eulerAngles.x;	
-        distanceToObject = 10;//(transform.position - orbitTarget.position).magnitude; 
+        rotationY = transform.eulerAngles.x;
+        distanceToObject = 10;//(transform.position - orbitTarget.position).magnitude;
     }
-    
 
     private float movSpeed;
     void FixedUpdate () {
@@ -50,162 +48,159 @@ public class CameraOrbit : MonoBehaviour {
         if(!(distanceToObject < minZoomeableDistance && Input.GetAxis("Mouse ScrollWheel") > 0) &&
            !(distanceToObject > maxZoomeableDistance && Input.GetAxis("Mouse ScrollWheel") < 0))
             distanceToObject += Input.GetAxis("Mouse ScrollWheel") * Time.deltaTime * zoomSpeed * -1;
-	
+
         rotationY = ClampAngle(rotationY, yRotationMin, yRotationMax);
         transform.rotation = Quaternion.Euler(rotationY, rotationX, 0);
         orbitTarget.localRotation = Quaternion.Euler(0, rotationX, 0);
         transform.position = transform.rotation * new Vector3(0f, 0f, -distanceToObject) + orbitTarget.position;
-	
+
         /* Camera Movement */
-	
-        bool limiteIzquierdo = orbitTarget.position.x <= 0;
-        bool limiteDerecho = orbitTarget.position.x >= MaxMoveableDistance.x;
-        bool limiteInferior = orbitTarget.position.z <= 0;
-        bool limiteSuperior = orbitTarget.position.z >= MaxMoveableDistance.y;
+        bool leftLimit = orbitTarget.position.x <= 0;
+        bool rightLimit = orbitTarget.position.x >= MaxMoveableDistance.x;
+        bool bottomLimit = orbitTarget.position.z <= 0;
+        bool topLimit = orbitTarget.position.z >= MaxMoveableDistance.y;
 
-        bool dentroLimitesIzquierdoYDerecho = orbitTarget.position.x > 0 && orbitTarget.position.x < MaxMoveableDistance.x;
-        bool dentroLimitesInferiorYSuperior = orbitTarget.position.z > 0 && orbitTarget.position.z < MaxMoveableDistance.y;
-	
-        bool moviendoseIzq = Input.GetAxis("Horizontal") < 0;
-        bool moviendoseDer = Input.GetAxis("Horizontal") > 0;
-        bool moviendoseArriba = Input.GetAxis("Vertical") > 0;
-        bool moviendoseAbajo = Input.GetAxis("Vertical") < 0;
+        bool movingLeft = Input.GetAxis("Horizontal") < 0;
+        bool movingRight = Input.GetAxis("Horizontal") > 0;
+        bool movingUp = Input.GetAxis("Vertical") > 0;
+        bool movingDown = Input.GetAxis("Vertical") < 0;
 
-        bool posicionAlineada = Vector3.Dot(Vector3.forward, orbitTarget.forward) >= 0;//orbitTargetPosition has the z axis aligned positively
+        bool alignedPosition = Vector3.Dot(Vector3.forward, orbitTarget.forward) >= 0;//orbitTargetPosition has the z axis aligned positively
 
-        bool direccionZLadoDerecho = (orbitTarget.forward.x - Vector3.forward.x) >= 0;//significa que la flecha azul del transform esta apuntando hacia la derecha con respecto de Vector3.forward	
-        bool direccionXLadoArriba = (orbitTarget.right.z - Vector3.right.z) >= 0;// significa que la flecha roja del transform esta apuntando hacia arriba con respecto a Vector3.right
-	
-        Vector3 moverHorizontal = Input.GetAxis("Horizontal") * orbitTarget.right * movSpeed * Time.deltaTime;
-        Vector3 moverVertical = Input.GetAxis("Vertical") * orbitTarget.forward * movSpeed * Time.deltaTime;
-        Vector3 moverHorizontalSoloDirHorizontal = new Vector3(Input.GetAxis("Horizontal") * orbitTarget.right.x,0,0) * movSpeed * Time.deltaTime;
-        Vector3 moverHorizontalSoloDirVertical = new Vector3(0,0,Input.GetAxis("Horizontal") * orbitTarget.right.z) * movSpeed * Time.deltaTime;
-        Vector3 moverVerticalSoloDirHorizontal = new Vector3(Input.GetAxis("Vertical") * orbitTarget.forward.x,0,0) * movSpeed * Time.deltaTime;
-        Vector3 moverVerticalSoloDirVertical = new Vector3(0,0,Input.GetAxis("Vertical") * orbitTarget.forward.z) * movSpeed * Time.deltaTime;
+        bool localZAxisOnTheRight = (orbitTarget.forward.x - Vector3.forward.x) >= 0;//Means the blue arrow is pointing towards right relative to Vector3.forward
+        bool localXOnUpSide = (orbitTarget.right.z - Vector3.right.z) >= 0;//Means red arrow of the transform is pointing up relative to Vector3.right
 
-        if(dentroLimitesIzquierdoYDerecho && dentroLimitesInferiorYSuperior) {
+        Vector3 moveHorizontal = Input.GetAxis("Horizontal") * orbitTarget.right * movSpeed * Time.deltaTime;
+        Vector3 moveVertical = Input.GetAxis("Vertical") * orbitTarget.forward * movSpeed * Time.deltaTime;
+        Vector3 moveHorizontalOnlyHorizontalDirection = new Vector3(Input.GetAxis("Horizontal") * orbitTarget.right.x,0,0) * movSpeed * Time.deltaTime;
+        Vector3 moveHorizontalOnlyVerticalDirection = new Vector3(0,0,Input.GetAxis("Horizontal") * orbitTarget.right.z) * movSpeed * Time.deltaTime;
+        Vector3 moveVerticalOnlyHorizontalDirection = new Vector3(Input.GetAxis("Vertical") * orbitTarget.forward.x,0,0) * movSpeed * Time.deltaTime;
+        Vector3 moveVerticalOnlyVerticalDirection = new Vector3(0,0,Input.GetAxis("Vertical") * orbitTarget.forward.z) * movSpeed * Time.deltaTime;
+
+        bool betweenLeftAndRightLimits = orbitTarget.position.x > 0 && orbitTarget.position.x < MaxMoveableDistance.x;
+        bool betweenBottomAndTopLimits = orbitTarget.position.z > 0 && orbitTarget.position.z < MaxMoveableDistance.y;
+        if(betweenLeftAndRightLimits && betweenBottomAndTopLimits) {
             orbitTarget.position += Input.GetAxis("Vertical") * orbitTarget.forward * movSpeed * Time.deltaTime;
             orbitTarget.position += Input.GetAxis("Horizontal") * orbitTarget.right * movSpeed * Time.deltaTime;
-        } 
-        /*** esquinas ***/
-        else if(limiteIzquierdo && limiteInferior) {//OK
-            if(posicionAlineada) {
-                if(moviendoseDer) orbitTarget.position += moverHorizontalSoloDirHorizontal;
-                if(moviendoseArriba) orbitTarget.position += moverVerticalSoloDirVertical;
-                if(!direccionZLadoDerecho && moviendoseAbajo) orbitTarget.position += moverVerticalSoloDirHorizontal;
-                if(!direccionXLadoArriba && moviendoseIzq) orbitTarget.position += moverHorizontalSoloDirVertical;
+        }
+        /*** corner cases ***/
+        else if(leftLimit && bottomLimit) {//OK
+            if(alignedPosition) {
+                if(movingRight) orbitTarget.position += moveHorizontalOnlyHorizontalDirection;
+                if(movingUp) orbitTarget.position += moveVerticalOnlyVerticalDirection;
+                if(!localZAxisOnTheRight && movingDown) orbitTarget.position += moveVerticalOnlyHorizontalDirection;
+                if(!localXOnUpSide && movingLeft) orbitTarget.position += moveHorizontalOnlyVerticalDirection;
             } else {
-                if(moviendoseIzq) orbitTarget.position += moverHorizontalSoloDirHorizontal;
-                if(moviendoseAbajo) orbitTarget.position += moverVerticalSoloDirVertical;
-                if(direccionXLadoArriba && moviendoseDer) orbitTarget.position += moverHorizontalSoloDirVertical;
-                if(direccionZLadoDerecho && moviendoseArriba) orbitTarget.position += moverVerticalSoloDirHorizontal;
+                if(movingLeft) orbitTarget.position += moveHorizontalOnlyHorizontalDirection;
+                if(movingDown) orbitTarget.position += moveVerticalOnlyVerticalDirection;
+                if(localXOnUpSide && movingRight) orbitTarget.position += moveHorizontalOnlyVerticalDirection;
+                if(localZAxisOnTheRight && movingUp) orbitTarget.position += moveVerticalOnlyHorizontalDirection;
             }
         }
-        else if(limiteIzquierdo && limiteSuperior) {//OK
-            if(posicionAlineada) {
-                if(moviendoseIzq && direccionXLadoArriba) orbitTarget.position += moverHorizontalSoloDirVertical;
-                if(moviendoseArriba && direccionZLadoDerecho) orbitTarget.position += moverVerticalSoloDirHorizontal;
-                if(moviendoseDer) orbitTarget.position += moverHorizontalSoloDirHorizontal;
-                if(moviendoseAbajo) orbitTarget.position += moverVerticalSoloDirVertical;
+        else if(leftLimit && topLimit) {//OK
+            if(alignedPosition) {
+                if(movingLeft && localXOnUpSide) orbitTarget.position += moveHorizontalOnlyVerticalDirection;
+                if(movingUp && localZAxisOnTheRight) orbitTarget.position += moveVerticalOnlyHorizontalDirection;
+                if(movingRight) orbitTarget.position += moveHorizontalOnlyHorizontalDirection;
+                if(movingDown) orbitTarget.position += moveVerticalOnlyVerticalDirection;
             } else {
-                if(moviendoseAbajo && !direccionZLadoDerecho/*izq*/) orbitTarget.position += moverVerticalSoloDirHorizontal;
-                if(moviendoseArriba) orbitTarget.position += moverVerticalSoloDirVertical;
-                if(moviendoseDer && direccionZLadoDerecho) orbitTarget.position += moverHorizontalSoloDirVertical;
-                if(moviendoseIzq) orbitTarget.position += moverHorizontalSoloDirHorizontal;
+                if(movingDown && !localZAxisOnTheRight/*izq*/) orbitTarget.position += moveVerticalOnlyHorizontalDirection;
+                if(movingUp) orbitTarget.position += moveVerticalOnlyVerticalDirection;
+                if(movingRight && localZAxisOnTheRight) orbitTarget.position += moveHorizontalOnlyVerticalDirection;
+                if(movingLeft) orbitTarget.position += moveHorizontalOnlyHorizontalDirection;
             }
         }
-        else if (limiteDerecho && limiteInferior) {//OK
-            if(posicionAlineada) {
-                if(moviendoseIzq) orbitTarget.position += moverHorizontalSoloDirHorizontal;
-                if(moviendoseArriba) orbitTarget.position += moverVerticalSoloDirVertical;
-                if(moviendoseDer && direccionXLadoArriba) orbitTarget.position += moverHorizontalSoloDirVertical;
-                if(moviendoseAbajo && direccionZLadoDerecho) orbitTarget.position += moverVerticalSoloDirHorizontal;
+        else if (rightLimit && bottomLimit) {//OK
+            if(alignedPosition) {
+                if(movingLeft) orbitTarget.position += moveHorizontalOnlyHorizontalDirection;
+                if(movingUp) orbitTarget.position += moveVerticalOnlyVerticalDirection;
+                if(movingRight && localXOnUpSide) orbitTarget.position += moveHorizontalOnlyVerticalDirection;
+                if(movingDown && localZAxisOnTheRight) orbitTarget.position += moveVerticalOnlyHorizontalDirection;
             } else {
-                if(moviendoseDer) orbitTarget.position += moverHorizontalSoloDirHorizontal;
-                if(moviendoseAbajo) orbitTarget.position += moverVerticalSoloDirVertical;
-                if(moviendoseIzq && !direccionXLadoArriba) orbitTarget.position += moverHorizontalSoloDirVertical;
-                if(moviendoseArriba && !direccionZLadoDerecho) orbitTarget.position += moverVerticalSoloDirHorizontal;
+                if(movingRight) orbitTarget.position += moveHorizontalOnlyHorizontalDirection;
+                if(movingDown) orbitTarget.position += moveVerticalOnlyVerticalDirection;
+                if(movingLeft && !localXOnUpSide) orbitTarget.position += moveHorizontalOnlyVerticalDirection;
+                if(movingUp && !localZAxisOnTheRight) orbitTarget.position += moveVerticalOnlyHorizontalDirection;
             }
         }
-        else if (limiteDerecho && limiteSuperior) {//OK
-            if(posicionAlineada) {
-                if(moviendoseIzq) orbitTarget.position += moverHorizontalSoloDirHorizontal;
-                if(moviendoseAbajo) orbitTarget.position += moverVerticalSoloDirVertical;
-                if(moviendoseDer && !direccionXLadoArriba) orbitTarget.position += moverHorizontalSoloDirVertical;
-                if(moviendoseArriba && !direccionZLadoDerecho) orbitTarget.position += moverVerticalSoloDirHorizontal;
+        else if (rightLimit && topLimit) {//OK
+            if(alignedPosition) {
+                if(movingLeft) orbitTarget.position += moveHorizontalOnlyHorizontalDirection;
+                if(movingDown) orbitTarget.position += moveVerticalOnlyVerticalDirection;
+                if(movingRight && !localXOnUpSide) orbitTarget.position += moveHorizontalOnlyVerticalDirection;
+                if(movingUp && !localZAxisOnTheRight) orbitTarget.position += moveVerticalOnlyHorizontalDirection;
             } else {
-                if(moviendoseIzq && direccionXLadoArriba) orbitTarget.position += moverHorizontalSoloDirVertical;
-                if(moviendoseDer) orbitTarget.position += moverHorizontalSoloDirHorizontal;
-                if(moviendoseAbajo && direccionZLadoDerecho) orbitTarget.position += moverVerticalSoloDirHorizontal;
-                if(moviendoseArriba) orbitTarget.position += moverVerticalSoloDirVertical;
+                if(movingLeft && localXOnUpSide) orbitTarget.position += moveHorizontalOnlyVerticalDirection;
+                if(movingRight) orbitTarget.position += moveHorizontalOnlyHorizontalDirection;
+                if(movingDown && localZAxisOnTheRight) orbitTarget.position += moveVerticalOnlyHorizontalDirection;
+                if(movingUp) orbitTarget.position += moveVerticalOnlyVerticalDirection;
             }
         } else {
-            if(limiteIzquierdo && moviendoseIzq) {//OK
-                if(posicionAlineada) orbitTarget.position += moverHorizontalSoloDirVertical;
-                else orbitTarget.position += moverHorizontal;
+            if(leftLimit && movingLeft) {//OK
+                if(alignedPosition) orbitTarget.position += moveHorizontalOnlyVerticalDirection;
+                else orbitTarget.position += moveHorizontal;
             }
-            else if(limiteDerecho && moviendoseIzq) {//OK
-                if(posicionAlineada) orbitTarget.position += moverHorizontal;
-                else orbitTarget.position += moverHorizontalSoloDirVertical;
+            else if(rightLimit && movingLeft) {//OK
+                if(alignedPosition) orbitTarget.position += moveHorizontal;
+                else orbitTarget.position += moveHorizontalOnlyVerticalDirection;
             }
-            else if(limiteInferior && moviendoseIzq) {//OK
-                if(direccionXLadoArriba) orbitTarget.position += moverHorizontalSoloDirHorizontal;
-                else orbitTarget.position += moverHorizontal;//lado abajo de Vector3.right
+            else if(bottomLimit && movingLeft) {//OK
+                if(localXOnUpSide) orbitTarget.position += moveHorizontalOnlyHorizontalDirection;
+                else orbitTarget.position += moveHorizontal;//lado abajo de Vector3.right
             }
-            else if(limiteSuperior && moviendoseIzq) {//OK
-                if(direccionXLadoArriba) orbitTarget.position += moverHorizontal;
-                else orbitTarget.position += moverHorizontalSoloDirHorizontal;
+            else if(topLimit && movingLeft) {//OK
+                if(localXOnUpSide) orbitTarget.position += moveHorizontal;
+                else orbitTarget.position += moveHorizontalOnlyHorizontalDirection;
             }
-	
-            if(limiteIzquierdo && moviendoseDer){//OK
-                if(posicionAlineada) orbitTarget.position += moverHorizontal;
-                else orbitTarget.position += moverHorizontalSoloDirVertical;
+            if(leftLimit && movingRight){//OK
+                if(alignedPosition) orbitTarget.position += moveHorizontal;
+                else orbitTarget.position += moveHorizontalOnlyVerticalDirection;
             }
-            else if(limiteDerecho && moviendoseDer) {//OK
-                if(posicionAlineada) orbitTarget.position += moverHorizontalSoloDirVertical;
-                else orbitTarget.position += moverHorizontal;
+            else if(rightLimit && movingRight) {//OK
+                if(alignedPosition) orbitTarget.position += moveHorizontalOnlyVerticalDirection;
+                else orbitTarget.position += moveHorizontal;
             }
-            else if (limiteInferior && moviendoseDer) {//OK
-                if(direccionXLadoArriba) orbitTarget.position +=  moverHorizontal;
-                else orbitTarget.position += moverHorizontalSoloDirHorizontal;
+            else if (bottomLimit && movingRight) {//OK
+                if(localXOnUpSide) orbitTarget.position +=  moveHorizontal;
+                else orbitTarget.position += moveHorizontalOnlyHorizontalDirection;
             }
-            else if(limiteSuperior && moviendoseDer) {//OK
-                if(direccionXLadoArriba) orbitTarget.position += moverHorizontalSoloDirHorizontal;
-                else orbitTarget.position += moverHorizontal;
-            }
-	
-            if(limiteIzquierdo && moviendoseAbajo){//OK
-                if(direccionZLadoDerecho) orbitTarget.position += moverVerticalSoloDirVertical;
-                else orbitTarget.position += moverVertical;//direccion izquierda 
-            }
-            else if(limiteInferior && moviendoseAbajo ) {//OK
-                if(posicionAlineada) orbitTarget.position += moverVerticalSoloDirHorizontal;
-                else orbitTarget.position += moverVertical;
-            }
-            else if(limiteDerecho && moviendoseAbajo) {//OK
-                if(direccionZLadoDerecho) orbitTarget.position += moverVertical;
-                else orbitTarget.position += moverVerticalSoloDirVertical;//dir izq
-            }
-            else if(limiteSuperior && moviendoseAbajo) {//OK
-                if(posicionAlineada) orbitTarget.position += moverVertical;
-                else orbitTarget.position += moverVerticalSoloDirHorizontal;
+            else if(topLimit && movingRight) {//OK
+                if(localXOnUpSide) orbitTarget.position += moveHorizontalOnlyHorizontalDirection;
+                else orbitTarget.position += moveHorizontal;
             }
 
-            if(limiteIzquierdo && moviendoseArriba){//Ok
-                if(direccionZLadoDerecho) orbitTarget.position += moverVertical;
-                else orbitTarget.position += moverVerticalSoloDirVertical;
-            }	
-            else if(limiteDerecho && moviendoseArriba) {//Ok
-                if(direccionZLadoDerecho) orbitTarget.position += moverVerticalSoloDirVertical;
-                else orbitTarget.position += moverVertical;
-            }	
-            else if(limiteInferior && moviendoseArriba) {//OK
-                if(posicionAlineada) orbitTarget.position += moverVertical;
-                else orbitTarget.position += moverVerticalSoloDirHorizontal;
-            }	
-            else if(limiteSuperior && moviendoseArriba) {//OK
-                if(posicionAlineada) orbitTarget.position += moverVerticalSoloDirHorizontal;
-                else orbitTarget.position += moverVertical;
+            if(leftLimit && movingDown){//OK
+                if(localZAxisOnTheRight) orbitTarget.position += moveVerticalOnlyVerticalDirection;
+                else orbitTarget.position += moveVertical;//direccion izquierda
+            }
+            else if(bottomLimit && movingDown ) {//OK
+                if(alignedPosition) orbitTarget.position += moveVerticalOnlyHorizontalDirection;
+                else orbitTarget.position += moveVertical;
+            }
+            else if(rightLimit && movingDown) {//OK
+                if(localZAxisOnTheRight) orbitTarget.position += moveVertical;
+                else orbitTarget.position += moveVerticalOnlyVerticalDirection;//dir izq
+            }
+            else if(topLimit && movingDown) {//OK
+                if(alignedPosition) orbitTarget.position += moveVertical;
+                else orbitTarget.position += moveVerticalOnlyHorizontalDirection;
+            }
+
+            if(leftLimit && movingUp){//Ok
+                if(localZAxisOnTheRight) orbitTarget.position += moveVertical;
+                else orbitTarget.position += moveVerticalOnlyVerticalDirection;
+            }
+            else if(rightLimit && movingUp) {//Ok
+                if(localZAxisOnTheRight) orbitTarget.position += moveVerticalOnlyVerticalDirection;
+                else orbitTarget.position += moveVertical;
+            }
+            else if(bottomLimit && movingUp) {//OK
+                if(alignedPosition) orbitTarget.position += moveVertical;
+                else orbitTarget.position += moveVerticalOnlyHorizontalDirection;
+            }
+            else if(topLimit && movingUp) {//OK
+                if(alignedPosition) orbitTarget.position += moveVerticalOnlyHorizontalDirection;
+                else orbitTarget.position += moveVertical;
             }
         }
 #endif

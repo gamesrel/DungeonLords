@@ -89,24 +89,23 @@ public sealed class Player {
             new Pos(mPlayerPos.x+2,mPlayerPos.z+2),
             new Pos(mPlayerPos.x+2, mPlayerPos.z-2),
 
-            new Pos(mPlayerPos.x-2,mPlayerPos.z+0)
-            new Pos(mPlayerPos.x+0,mPlayerPos.z+2)
-            new Pos(mPlayerPos.x+2,mPlayerPos.z+0)
-            new Pos(mPlayerPos.x+0, mPlayerPos.z-2)
+            new Pos(mPlayerPos.x-2,mPlayerPos.z+0),
+            new Pos(mPlayerPos.x+0,mPlayerPos.z+2),
+            new Pos(mPlayerPos.x+2,mPlayerPos.z+0),
+            new Pos(mPlayerPos.x+0, mPlayerPos.z-2),
 
-            new Pos(mPlayerPos.x-2,mPlayerPos.z+1)
-            new Pos(mPlayerPos.x+1,mPlayerPos.z+2)
-            new Pos(mPlayerPos.x+2,mPlayerPos.z-1)
-            new Pos(mPlayerPos.x-1, mPlayerPos.z-2)
+            new Pos(mPlayerPos.x-2,mPlayerPos.z+1),
+            new Pos(mPlayerPos.x+1,mPlayerPos.z+2),
+            new Pos(mPlayerPos.x+2,mPlayerPos.z-1),
+            new Pos(mPlayerPos.x-1, mPlayerPos.z-2),
 
-            new Pos(mPlayerPos.x-2,mPlayerPos.z-1)
-            new Pos(mPlayerPos.x-1,mPlayerPos.z+2)
-            new Pos(mPlayerPos.x+2,mPlayerPos.z+1)
+            new Pos(mPlayerPos.x-2,mPlayerPos.z-1),
+            new Pos(mPlayerPos.x-1,mPlayerPos.z+2),
+            new Pos(mPlayerPos.x+2,mPlayerPos.z+1),
             new Pos(mPlayerPos.x+1, mPlayerPos.z-2) };
         // no podés usar Select en vez de ciclos de una línea?
         for(int i = 0; i < numberOfDiggers; i++) {
-            mMinions.Add(new Digger(this
-                                    initialPositions[i%initialPositions.Length], "Digger " + i));
+            mMinions.Add(new Digger(this, initialPositions[i%initialPositions.Length], "Digger " + i));
         }
     }
 }

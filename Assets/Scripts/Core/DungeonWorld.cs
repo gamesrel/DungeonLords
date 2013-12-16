@@ -10,11 +10,8 @@ using System.Collections.Generic;
 
 public sealed class DungeonWorld {
     //represents a tile matrix that contains the players.
-    // This matrix should be only be modified by methods that this class contains
-    // el private static no te dice lo mismo que la línea anterior a esta?
     private static Tile[,] mWarZone;
     public static Tile[,] WarZone { get { return mWarZone; } }
-    // Espacio vacío inconsistente.
 
     public static GameObject WarMap { get; set; }
     // Espacio vacío inconsistente.
@@ -26,26 +23,18 @@ public sealed class DungeonWorld {
     public static int WorldHeight { get { return mWorldHeight; } }
 
 
-    // move el comentario tuyo a
-    // Si me vas a definir esto aquí (por qué?) entonces al menos decime dónde está EntryPoint.cs.
-    public static Pathfinding.GridGraph AIWorldGraph { get; set; }//defines the nav mesh for all the AI to move from A to B pos; This gets set in EntryPoint.cs
-
     public DungeonWorld(int width, int height, List<Player> playersList) {
         mWarZone = new Tile[width,height];
         mWorldWidth = width;
         mWorldHeight = height;
         CreateWorldLimits(width, height);
         PlacePlayers(playersList);
-        // más espacio inconsistente!
     }
 
     // Gets called from EntryPoint.cs
     private void PlacePlayers(List <Player> players) {
         for(int i = 0; i < players.Count; i++)
             CreateStartingPlace(players[i].PlayerPosition, players[i]);
-        // Si usas source control por qué tenés esto comentado aquí? Borralo
-        // si no está haciendo nada para no causar confusión.
-        //PrintWarZone();
     }
 
 
@@ -135,7 +124,6 @@ public sealed class DungeonWorld {
 
                     createdFloor.Left = floorLeft;
                     floorLeft.Right = createdFloor;
-
 
                 } else {//SOMETHING ELSE
                     Debug.LogError("Not supported tile type: " + mWarZone[p.x-1, p.z].GetType());
@@ -314,8 +302,6 @@ public sealed class DungeonWorld {
             }
     }
 
-
-
     /**/
     private void PrintWarZone() {
         string s = "";
@@ -334,11 +320,9 @@ public sealed class DungeonWorld {
                         // aquí a un método
                     }
                 }
-
             }
             s += "\n";
         }
         Debug.Log(s);
     }
-
 }

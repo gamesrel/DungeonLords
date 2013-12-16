@@ -58,10 +58,9 @@ public sealed class TaskManager : MonoBehaviour {
         // make sure when assigning a task to a minion remove it from the tasks list as the minion has the task already in his class assigned
         switch (t.TypeOfTask) {
         case TASK.DIG:
-            StartCoroutine(MoveClosestFreeMinionsToTask(minions, t, typeof(Digger)));
+            Debug.Log("DIG");
             break;
         case TASK.CONVERTFLOORTILE:
-            StartCoroutine(MoveClosestFreeMinionsToTask(minions, t, typeof(Digger)));
             Debug.Log("CONVERT FLOOR TILE");
             break;
         case TASK.CONVERTWALLTILE:
@@ -73,97 +72,6 @@ public sealed class TaskManager : MonoBehaviour {
         }
     }
 
-    // El monton de código abajo de esto es el mayor mess que he visto de todos los archivos,
-    // mira la longitud del metodo en lineas de codigo. Extrae este comportamiento a nuevas
-    // clases/metodos.
-
-    //Retrieves a list of Minions that dont have tasks that are the closest to a position p
-    //this is the meat of the AI
-    private bool finishedCalculatingFreeMinions = true;//this is done so this funcion gets called once fully and not "thereaded", consider this function as a big lock.
-    private IEnumerator MoveClosestFreeMinionsToTask(List<Minion> minions, Task t, System.Type typeOfMinion = null) {
-        bool exactPosition = (t.TypeOfTask == TASK.CONVERTFLOORTILE);//only make the free minion go to the exact task position if we are converting a floor tile, else check the surroundings
-
-        while(!finishedCalculatingFreeMinions)
-            yield return null;
-        finishedCalculatingFreeMinions = false;
-
-        //----Debug.Log("*** Analizing TASK: " + t.TaskID + " ****");
-        List<Minion> arrMinions = new List<Minion>();//[t.NumberOfMinionsForTask];
-        if(typeOfMinion != null) {//working when giving a type of minion
-            for(int i = 0; i < minions.Count; i++) {//calculate paths on the respective minions...
-                if(minions[i].GetType() == typeOfMinion  && minions[i].CurrentTask == null &&  //minion is free and is of typeOfMinion
-                   !minions[i].IsGrabbed) {// and minion is not in the player's stack.
-                    minions[i].CalculatePathTo(t.TaskPosition, exactPosition);//calculate the path to reach the surroundings or exact position  of p.
-                    while(!minions[i].PathHasBeenCalculated()) //distance hasnt been calculated
-                        yield return null;
-                    /************/
-                    //here the distance to p has been calculated for minion[i]. now lets do the magic and find the closest ones
-                    /************/
-                    Debug.Log("DISTANCE[" + i + "]:" + minions[i].GetDistanceToCalculatedPos() + " Minion:" + minions[i].minionRepresentation.name);
-                    Debug.Log(minions[i].ClosestPositionAroundCalculatedDistanceToP());
-                    if(minions[i].GetDistanceToCalculatedPos() != (int) PATH.UNREACHEABLE) {// check that the minion CAN reach the path. else it doesnt make sense.
-                        if(arrMinions.Count < t.NumberOfMinionsForTask) {
-                            //Debug.Log("Adding a minion " + minions[i].minionRepresentation.name + " to task #" + t.TaskID );
-                            arrMinions.Add(minions[i]);
-                        } else {//we have minions for this task, now lets search the shortest distances from all
-                            /** Calculate minimum distances for all the minions **/
-                            if(minions[i].GetDistanceToCalculatedPos() == -1)
-                                Debug.LogError("Error: Distance -1!");
-                            for(int j = 0; j < arrMinions.Count; j++) {//replace the minion with the biggest distance of the array
-                                if( minions[i].GetDistanceToCalculatedPos() < arrMinions[j].GetDistanceToCalculatedPos()) {
-                                    int biggestDistanceInArrMinions = -1;
-                                    int index = 0;
-                                    //find the biggest distance in arrMinions
-                                    for(int k = 0; k < arrMinions.Count; k++) {
-                                        if(biggestDistanceInArrMinions < arrMinions[k].GetDistanceToCalculatedPos()) {
-                                            biggestDistanceInArrMinions = arrMinions[k].GetDistanceToCalculatedPos();
-                                            index = k;
-                                        }
-                                    }
-                                    arrMinions[index] = minions[i];
-                                    break;
-                                }
-                            }
-                            /****************************************************/
-                        }
-                    }
-                }
-            }
-            bool reachablePath = false; //this is used to count or not a minion in a task if the path can be reached or not.
-            //Make each minion of Arr minions go to P!
-            for(int i = 0; i < arrMinions.Count; i++) {
-                Pos closestPos = arrMinions[i].ClosestPositionAroundCalculatedDistanceToP();
-                if(closestPos != null && arrMinions[i].CurrentTask == null) {
-                    arrMinions[i].MarkGoToPosition(closestPos);//calculate path to get to p
-                    while(!minions[i].PathHasBeenCalculated())//wait until the path has been calculated
-                        yield return null;
-                    arrMinions[i].StartMovingToPosition();//move to p!
-                    //and assign the task to the minions that we selected
-                    arrMinions[i].CurrentTask = t;
-                    Debug.Log("ADDING MINION '" + arrMinions[i].minionRepresentation.name +"' TO TASK " + t.TaskID);
-                    t.AddMinion(arrMinions[i]); //let the task know who is in charge of this task
-                    reachablePath = true;
-                } else {
-                    reachablePath = false;
-                }
-            }
-            //Debug.Log("******|Adding " + arrMinions.Count + " to the numberOfMinionsForTask|******");
-            int taskIndex = GetTaskIndex(t);
-            if(taskIndex != -1/*means the task hasnt been found.*/ && reachablePath)
-                numberOfMinionsInTask[taskIndex] = arrMinions.Count;
-
-        } else {
-            Debug.LogError("Still need to implement moving any kind of minion.");
-        }
-        /** print closest minions **/
-        Debug.Log("Found " + arrMinions.Count + " minion(s) available");
-        for (int i = 0; i < arrMinions.Count; i++) {
-            Debug.Log("Closest minion[" + i + "]: " + arrMinions[i].minionRepresentation.name + " Distance: " + arrMinions[i].GetDistanceToCalculatedPos());
-        }
-        //---Debug.Log("*** *** *** ***");
-        /***************************/
-        finishedCalculatingFreeMinions = true;
-    }
 
     public Task PositionMarkedForDig(Pos p) {//returns the task that is for digging at position p,if not task is found, returns null
         //Debug.Log("Searching if task already exists");
